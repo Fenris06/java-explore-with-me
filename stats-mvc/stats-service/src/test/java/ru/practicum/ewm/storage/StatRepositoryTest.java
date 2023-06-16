@@ -17,12 +17,12 @@ import java.util.List;
 @DataJpaTest
 @AutoConfigureTestDatabase
 public class StatRepositoryTest {
-    final LocalDateTime START = LocalDateTime.of(2023, 5, 1, 1, 0, 0);
-    final LocalDateTime END = LocalDateTime.of(2023, 6, 29, 0, 0, 0);
+    final LocalDateTime start = LocalDateTime.of(2023, 5, 1, 1, 0, 0);
+    final LocalDateTime end = LocalDateTime.of(2023, 6, 29, 0, 0, 0);
     final List<String> events = List.of("/events/1", "/events/2");
     final List<String> event1 = List.of("/events/1");
-    final LocalDateTime START_EMPTY = LocalDateTime.of(2023, 4, 1, 1, 1, 1);
-    final LocalDateTime END_EMPTY = LocalDateTime.of(2023, 5, 1, 0, 59, 59);
+    final LocalDateTime startEmpty = LocalDateTime.of(2023, 4, 1, 1, 1, 1);
+    final LocalDateTime endEmpty = LocalDateTime.of(2023, 5, 1, 0, 59, 59);
     Stat first;
     Stat second;
     Stat third;
@@ -84,7 +84,7 @@ public class StatRepositoryTest {
 
     @Test
     void should_GetStartReturnListHiT_IfStartEndEventsIsExist() {
-        List<Hit> hits = statRepository.getStat(START, END, events);
+        List<Hit> hits = statRepository.getStat(start, end, events);
         assertEquals(hits.size(), 2);
         assertEquals(hits.get(0).getApp(), "ewm-main-service");
         assertEquals(hits.get(1).getApp(), "ewm-main-service");
@@ -96,7 +96,7 @@ public class StatRepositoryTest {
 
     @Test
     void should_GetStartDistinctReturnListHiT_IfStartEndEventsIsExist() {
-        List<Hit> hits = statRepository.getStatDistinct(START, END, events);
+        List<Hit> hits = statRepository.getStatDistinct(start, end, events);
         assertEquals(hits.size(), 2);
         assertEquals(hits.get(0).getApp(), "ewm-main-service");
         assertEquals(hits.get(1).getApp(), "ewm-main-service");
@@ -105,21 +105,22 @@ public class StatRepositoryTest {
         assertEquals(hits.get(0).getHits(), 2);
         assertEquals(hits.get(1).getHits(), 2);
     }
+
     @Test
     void should_GetStartReturnEmptyListHiT_IfStartEndIsBefore() {
-        List<Hit> hits = statRepository.getStat(START_EMPTY, END_EMPTY, events);
+        List<Hit> hits = statRepository.getStat(startEmpty, endEmpty, events);
         assertEquals(hits.size(), 0);
     }
 
     @Test
     void should_GetStartDistinctReturnEmptyListHiT_IfStartEndIsBefore() {
-        List<Hit> hits = statRepository.getStatDistinct(START_EMPTY, END_EMPTY, events);
+        List<Hit> hits = statRepository.getStatDistinct(startEmpty, endEmpty, events);
         assertEquals(hits.size(), 0);
     }
 
     @Test
     void should_GetStartReturnListHiTOneEvent_IfStartEndEventsIsExist() {
-        List<Hit> hits = statRepository.getStat(START, END, event1);
+        List<Hit> hits = statRepository.getStat(start, end, event1);
         assertEquals(hits.size(), 1);
         assertEquals(hits.get(0).getApp(), "ewm-main-service");
         assertEquals(hits.get(0).getUri(), "/events/1");
@@ -128,7 +129,7 @@ public class StatRepositoryTest {
 
     @Test
     void should_GetStartDistinctReturnListHiTOneEvent_IfStartEndEventsIsExist() {
-        List<Hit> hits = statRepository.getStatDistinct(START, END, event1);
+        List<Hit> hits = statRepository.getStatDistinct(start, end, event1);
         assertEquals(hits.size(), 1);
         assertEquals(hits.get(0).getApp(), "ewm-main-service");
         assertEquals(hits.get(0).getUri(), "/events/1");
