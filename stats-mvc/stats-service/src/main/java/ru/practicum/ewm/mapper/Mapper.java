@@ -30,7 +30,7 @@ public class Mapper {
     public static HitDTO hitToDTO(Hit hit) {
         HitDTO hitDTO = new HitDTO();
         hitDTO.setApp(hit.getApp());
-        hitDTO.setUri(hitDTO.getUri());
+        hitDTO.setUri(hit.getUri());
         hitDTO.setHits(hit.getHits());
         return hitDTO;
     }

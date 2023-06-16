@@ -30,6 +30,12 @@ public class StatServiceImpl implements StatService {
     @Override
     @Transactional(readOnly = true)
     public List<HitDTO> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+        if (uris.isEmpty()) {
+            return repository.getStatAll(start, end)
+                    .stream()
+                    .map(Mapper::hitToDTO)
+                    .collect(Collectors.toList());
+        }
         if (!unique) {
             return repository.getStat(start, end, uris)
                     .stream()
