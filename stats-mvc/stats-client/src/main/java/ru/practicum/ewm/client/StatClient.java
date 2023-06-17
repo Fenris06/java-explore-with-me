@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 public class StatClient {
-    private final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final WebClient client;
 
     public StatClient() {
@@ -39,8 +39,8 @@ public class StatClient {
     }
 
     public ResponseEntity<List<HitDTO>> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        String startDate = start.format(DATE_FORMAT);
-        String endDate = end.format(DATE_FORMAT);
+        String startDate = start.format(timeFormatter);
+        String endDate = end.format(timeFormatter);
         return client
                 .get()
                 .uri(uriBuilder -> uriBuilder

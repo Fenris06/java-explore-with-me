@@ -20,11 +20,11 @@ import java.util.List;
 @Slf4j
 public class Controller {
     private final StatService service;
-    private final static String PATTERN = "yyyy-MM-dd HH:mm:ss";
+    private final String pattern = "yyyy-MM-dd HH:mm:ss";
 
     @GetMapping("/stats")
-    public List<HitDTO> getHit(@RequestParam(name = "start") @DateTimeFormat(pattern = PATTERN) LocalDateTime start,
-                               @RequestParam(name = "end") @DateTimeFormat(pattern = PATTERN) LocalDateTime end,
+    public List<HitDTO> getHit(@RequestParam(name = "start") @DateTimeFormat(pattern = pattern) LocalDateTime start,
+                               @RequestParam(name = "end") @DateTimeFormat(pattern = pattern) LocalDateTime end,
                                @RequestParam(name = "uris", required = false, defaultValue = "") List<String> uris,
                                @RequestParam(name = "unique", required = false, defaultValue = "false") Boolean unique) {
         log.info("Exception in getHit with start {} and end {} and List<uris> {} unique {}", start, end, uris, unique);
