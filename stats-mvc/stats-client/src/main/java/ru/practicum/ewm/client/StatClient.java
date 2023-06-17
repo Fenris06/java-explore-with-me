@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 public class StatClient {
-    private final static DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final WebClient client;
 
     public StatClient() {
