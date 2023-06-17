@@ -29,6 +29,7 @@ public class StatRepositoryTest {
     Stat fourth;
     Stat five;
     Stat six;
+    Stat seven;
     @Autowired
     StatRepository statRepository;
 
@@ -75,6 +76,14 @@ public class StatRepositoryTest {
         six.setIp("192.163.0.2");
         six.setTimestamp(LocalDateTime.of(2023, 5, 7, 11, 0, 23));
         statRepository.save(six);
+
+        seven = new Stat();
+        seven.setApp("ewm-main-service");
+        seven.setUri("/events/3");
+        seven.setIp("192.163.0.2");
+        seven.setTimestamp(LocalDateTime.of(2023, 5, 7, 11, 0, 23));
+        statRepository.save(seven);
+
     }
 
     @AfterEach
@@ -134,5 +143,35 @@ public class StatRepositoryTest {
         assertEquals(hits.get(0).getApp(), "ewm-main-service");
         assertEquals(hits.get(0).getUri(), "/events/1");
         assertEquals(hits.get(0).getHits(), 2);
+    }
+
+    @Test
+    void should_GetStartAllReturnListHiT_IfStartEndEventsIsExist() {
+        List<Hit> hits = statRepository.getStatAll(start, end);
+        assertEquals(hits.size(), 3);
+        assertEquals(hits.get(0).getApp(), "ewm-main-service");
+        assertEquals(hits.get(1).getApp(), "ewm-main-service");
+        assertEquals(hits.get(2).getApp(), "ewm-main-service");
+        assertEquals(hits.get(0).getUri(), "/events/1");
+        assertEquals(hits.get(1).getUri(), "/events/2");
+        assertEquals(hits.get(2).getUri(), "/events/3");
+        assertEquals(hits.get(0).getHits(), 3);
+        assertEquals(hits.get(1).getHits(), 3);
+        assertEquals(hits.get(2).getHits(), 1);
+    }
+
+    @Test
+    void should_GetStartAllDistinctReturnListHiT_IfStartEndEventsIsExist() {
+        List<Hit> hits = statRepository.getStatAllDistinct(start, end);
+        assertEquals(hits.size(), 3);
+        assertEquals(hits.get(0).getApp(), "ewm-main-service");
+        assertEquals(hits.get(1).getApp(), "ewm-main-service");
+        assertEquals(hits.get(2).getApp(), "ewm-main-service");
+        assertEquals(hits.get(0).getUri(), "/events/1");
+        assertEquals(hits.get(1).getUri(), "/events/2");
+        assertEquals(hits.get(2).getUri(), "/events/3");
+        assertEquals(hits.get(0).getHits(), 2);
+        assertEquals(hits.get(1).getHits(), 2);
+        assertEquals(hits.get(2).getHits(), 1);
     }
 }

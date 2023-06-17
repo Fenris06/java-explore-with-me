@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.ewm.exception.ErrorResponse;
+import ru.practicum.ewm.exception.NoArgumentException;
 
 @RestControllerAdvice
 public class ErrorController {
@@ -25,5 +26,11 @@ public class ErrorController {
         } else {
             return new  ErrorResponse(error.getDefaultMessage());
         }
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse noArgHandler(final NoArgumentException e) {
+        return new ErrorResponse(e.getMessage());
     }
 }

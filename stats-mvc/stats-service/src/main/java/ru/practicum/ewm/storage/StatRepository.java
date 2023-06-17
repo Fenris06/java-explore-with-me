@@ -32,5 +32,13 @@ public interface StatRepository extends JpaRepository<Stat, Long> {
             "where s.timestamp between ?1 and ?2 " +
             "group by s.app, s.uri " +
             "order by count(s.ip) desc")
+    List<Hit> getStatAllDistinct(LocalDateTime timestampStart, LocalDateTime timestampEnd);
+
+    @Query("select new ru.practicum.ewm.model.Hit(s.app, s.uri, count(s.ip))" +
+            "from Stat s " +
+            "where s.timestamp between ?1 and ?2 " +
+            "group by s.app, s.uri " +
+            "order by count(s.ip) desc")
     List<Hit> getStatAll(LocalDateTime timestampStart, LocalDateTime timestampEnd);
+
 }
