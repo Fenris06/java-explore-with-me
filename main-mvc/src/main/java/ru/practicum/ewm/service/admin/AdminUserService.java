@@ -1,6 +1,6 @@
 package ru.practicum.ewm.service.admin;
 
-import ru.practicum.ewm.dto.userdto.UserDTO;
+import ru.practicum.ewm.dto.user.UserDTO;
 
 import java.util.List;
 
@@ -10,5 +10,5 @@ public interface AdminUserService {
 
     UserDTO createUser(UserDTO userDTO);
 
-    Long delete(Long userId);
+    void delete(Long userId);
 }

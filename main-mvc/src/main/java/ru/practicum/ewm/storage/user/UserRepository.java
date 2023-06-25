@@ -1,4 +1,4 @@
-package ru.practicum.ewm.storage.userstorage;
+package ru.practicum.ewm.storage.user;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

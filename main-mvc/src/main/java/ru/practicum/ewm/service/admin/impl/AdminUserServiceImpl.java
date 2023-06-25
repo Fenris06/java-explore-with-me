@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.dto.userdto.UserDTO;
+import ru.practicum.ewm.dto.user.UserDTO;
 import ru.practicum.ewm.exception.NotFoundException;
-import ru.practicum.ewm.mapper.usermapper.UserMapper;
+import ru.practicum.ewm.mapper.user.UserMapper;
 import ru.practicum.ewm.model.user.User;
 import ru.practicum.ewm.service.admin.AdminUserService;
-import ru.practicum.ewm.storage.userstorage.UserRepository;
+import ru.practicum.ewm.storage.user.UserRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,10 +44,9 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     @Override
     @Transactional
-    public Long delete(Long userId) {
+    public void delete(Long userId) {
         checkUser(userId);
         repository.deleteById(userId);
-        return userId;
     }
 
     private void checkUser(Long userId) {

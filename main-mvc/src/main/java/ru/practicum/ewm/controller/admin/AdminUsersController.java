@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.dto.userdto.UserDTO;
+import ru.practicum.ewm.dto.user.UserDTO;
 import ru.practicum.ewm.service.admin.AdminUserService;
 
 import javax.validation.Valid;
@@ -33,7 +33,7 @@ public class AdminUsersController {
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Long delete(@PathVariable("userId") Long userId) {
-       return service.delete(userId);
+    public void delete(@PathVariable("userId") Long userId) {
+        service.delete(userId);
     }
 }
