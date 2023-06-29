@@ -42,3 +42,15 @@ CREATE TABLE IF NOT EXISTS requests (
  CONSTRAINT fk_requests_to_users FOREIGN KEY(requester) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS compilations (
+ id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ pinned BOOLEAN NOT NULL,
+ title varchar(50) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS compilations_events (
+ compilation_id BIGINT NOT NULL,
+ event_id BIGINT NOT NULL,
+ CONSTRAINT fk_compilations_events_to_events FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE,
+ CONSTRAINT fk_compilations_events_to_compilations FOREIGN KEY(compilation_id) REFERENCES compilations(id) ON DELETE CASCADE
+);

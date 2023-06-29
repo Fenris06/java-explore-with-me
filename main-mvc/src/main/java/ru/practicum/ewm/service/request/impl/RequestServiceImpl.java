@@ -75,6 +75,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional
     public EventRequestStatusUpdateResultDTO updateEventRequestStatus(Long userId, Long eventId, EventRequestStatusUpdateRequestDTO updateRequestDto) {
         Event event = checkRequestEventOwner(userId, eventId);
         Long requestLimit = checkRequestLimit(event.getConfirmedRequests(), event.getParticipantLimit(), eventId);
