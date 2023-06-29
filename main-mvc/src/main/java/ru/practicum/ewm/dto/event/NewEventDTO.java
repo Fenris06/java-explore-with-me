@@ -5,10 +5,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.beans.factory.annotation.Value;
 
 import ru.practicum.ewm.model.event.Location;
-import ru.practicum.ewm.model.event.StateAction;
+import ru.practicum.ewm.model.event.UserStateAction;
 import ru.practicum.ewm.vallidarion.Create;
 import ru.practicum.ewm.vallidarion.Update;
 
@@ -39,7 +38,7 @@ public class NewEventDTO {
     private Boolean paid;
     private Long participantLimit;
     private Boolean requestModeration;
-    private StateAction stateAction;
+    private UserStateAction stateAction;
     @NotBlank(message = "Field: title. Error: must not be empty or have only white spase. Value: empty", groups = Create.class)
     @Size(min = 3, max = 120, message = "Field: annotation. Error: must be min 3 char and max 120", groups = {Create.class, Update.class})
     private String title;

@@ -1,4 +1,4 @@
-package ru.practicum.ewm.service.priv;
+package ru.practicum.ewm.service.event;
 
 import ru.practicum.ewm.dto.event.EventFullDTO;
 import ru.practicum.ewm.dto.event.EventShortDTO;
@@ -6,7 +6,7 @@ import ru.practicum.ewm.dto.event.NewEventDTO;
 
 import java.util.List;
 
-public interface PrivateEventService {
+public interface EventService {
 
     EventFullDTO createEvent(Long userId, NewEventDTO newEventDTO);
 
@@ -15,4 +15,6 @@ public interface PrivateEventService {
     EventFullDTO getEvent(Long userId, Long eventId);
 
     EventFullDTO updateEvent(Long userId, Long eventId, NewEventDTO newEventDTO);
+
+    EventFullDTO updateAdminEvent(Long eventId, NewEventDTO newEventDTO);
 }

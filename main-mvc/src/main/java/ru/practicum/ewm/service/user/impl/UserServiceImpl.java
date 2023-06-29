@@ -1,4 +1,4 @@
-package ru.practicum.ewm.service.admin.impl;
+package ru.practicum.ewm.service.user.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -8,7 +8,7 @@ import ru.practicum.ewm.dto.user.UserDTO;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.mapper.user.UserMapper;
 import ru.practicum.ewm.model.user.User;
-import ru.practicum.ewm.service.admin.AdminUserService;
+import ru.practicum.ewm.service.user.UserService;
 import ru.practicum.ewm.storage.user.UserRepository;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class AdminUserServiceImpl implements AdminUserService {
+public class UserServiceImpl implements UserService {
     private final UserRepository repository;
 
     @Override

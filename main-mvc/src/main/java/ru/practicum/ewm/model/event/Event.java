@@ -19,7 +19,7 @@ public class Event {
     private Long id;
     @Column(name = "annotation", length = 2000, nullable = false)
     private String annotation;
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
     @Column(name = "confirmed_requests")
@@ -49,7 +49,7 @@ public class Event {
     private Boolean requestModeration;
     @Enumerated(EnumType.STRING)
     @Column(name = "state", length = 20, nullable = false)
-    private State state;
+    private DataState state;
     @Column(name = "title", length = 120, nullable = false)
     private String title;
 }

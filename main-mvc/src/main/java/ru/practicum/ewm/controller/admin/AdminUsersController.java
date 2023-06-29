@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.user.UserDTO;
-import ru.practicum.ewm.service.admin.AdminUserService;
+import ru.practicum.ewm.service.user.UserService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -16,12 +16,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 public class AdminUsersController {
-    private final AdminUserService service;
+    private final UserService service;
 
     @GetMapping
     public List<UserDTO> getUsers(@RequestParam(name = "ids", required = false, defaultValue = "") List<Long> ids,
                                   @RequestParam(name = "from", required = false, defaultValue = "0") @Min(0) Integer from,
-                                  @RequestParam(name = "size", required = false, defaultValue = "10") @Min(0) Integer size) {
+                                  @RequestParam(name = "size", required = false, defaultValue = "10") @Min(1) Integer size) {
         return service.getUsers(ids, from, size);
     }
 
