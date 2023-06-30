@@ -1,9 +1,11 @@
 package ru.practicum.ewm.service.event.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Session;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import ru.practicum.ewm.dto.event.EventFullDTO;
 import ru.practicum.ewm.dto.event.EventShortDTO;
 import ru.practicum.ewm.dto.event.NewEventDTO;
@@ -21,6 +23,8 @@ import ru.practicum.ewm.storage.category.CategoryRepository;
 import ru.practicum.ewm.storage.event.EventRepository;
 import ru.practicum.ewm.storage.user.UserRepository;
 
+
+import javax.persistence.EntityManager;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -90,6 +94,28 @@ public class EventServiceImpl implements EventService {
         checkEventDate(event.getEventDate());
         checkEventStatusByAdmin(event.getState());
         return EventMapper.toDTO(eventRepository.save(updateEventFields(event, newEventDTO)));
+    }
+
+    @Override
+    public EventFullDTO getEventById(Long id) {
+        Event event = eventRepository.findByIdAndState(id, DataState.PUBLISHED)
+                .orElseThrow(() -> new NotFoundException("Event id=" + id + " not found"));
+        return EventMapper.toDTO(event);
+    }
+
+    @Override
+    public List<EventShortDTO> getPubEvents(String text,
+                                            List<Long> categories,
+                                            Boolean paid,
+                                            LocalDateTime rangeStart,
+                                            LocalDateTime rangeEnd,
+                                            Boolean onlyAvailable,
+                                            String sort,
+                                            Integer from,
+                                            Integer size) {
+
+        PageRequest page = PageRequest.of(from / size, size);
+        return eventRepository.gegPubEvents(DataState.PUBLISHED, text, text, categories, paid, rangeStart, rangeEnd, page).stream().map(EventMapper::toShortDTO).collect(Collectors.toList());
     }
 
     private User checkUser(Long userId) {

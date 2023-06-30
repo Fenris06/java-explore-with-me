@@ -4,6 +4,7 @@ import ru.practicum.ewm.dto.event.EventFullDTO;
 import ru.practicum.ewm.dto.event.EventShortDTO;
 import ru.practicum.ewm.dto.event.NewEventDTO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventService {
@@ -17,4 +18,16 @@ public interface EventService {
     EventFullDTO updateEvent(Long userId, Long eventId, NewEventDTO newEventDTO);
 
     EventFullDTO updateAdminEvent(Long eventId, NewEventDTO newEventDTO);
+
+    EventFullDTO getEventById(Long id);
+
+    List<EventShortDTO> getPubEvents(String text,
+                                     List<Long> categories,
+                                     Boolean paid,
+                                     LocalDateTime rangeStart,
+                                     LocalDateTime rangeEnd,
+                                     Boolean onlyAvailable,
+                                     String sort,
+                                     Integer from,
+                                     Integer size);
 }
