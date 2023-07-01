@@ -104,6 +104,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EventShortDTO> getPubEvents(String text,
                                             List<Long> categories,
                                             Boolean paid,
@@ -116,6 +117,12 @@ public class EventServiceImpl implements EventService {
 
         PageRequest page = PageRequest.of(from / size, size);
         return eventRepository.gegPubEvents(DataState.PUBLISHED, text, text, categories, paid, rangeStart, rangeEnd, page).stream().map(EventMapper::toShortDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EventFullDTO> getAdminEvents(List<Long> users, List<DataState> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
+        PageRequest page = PageRequest.of(from / size, size);
+        return eventRepository.getAdminEvents(users, states, categories, rangeStart, rangeEnd, page).stream().map(EventMapper::toDTO).collect(Collectors.toList());
     }
 
     private User checkUser(Long userId) {
