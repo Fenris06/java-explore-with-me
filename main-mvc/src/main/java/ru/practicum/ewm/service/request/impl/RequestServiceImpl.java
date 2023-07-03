@@ -213,7 +213,7 @@ public class RequestServiceImpl implements RequestService {
                 });
             }
         }
-        if(!confirmed.isEmpty()) {
+        if (!confirmed.isEmpty()) {
             Long newConfirmedRequests = event.getConfirmedRequests() + confirmed.size();
             event.setConfirmedRequests(newConfirmedRequests);
             eventRepository.save(event);

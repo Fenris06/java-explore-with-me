@@ -2,7 +2,7 @@ package ru.practicum.ewm.model.request;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.practicum.ewm.model.event.DataState;
+
 import ru.practicum.ewm.model.event.Event;
 import ru.practicum.ewm.model.user.User;
 

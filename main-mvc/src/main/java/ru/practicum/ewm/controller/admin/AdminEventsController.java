@@ -13,7 +13,7 @@ import ru.practicum.ewm.vallidarion.Update;
 import javax.validation.Valid;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+
 import java.util.List;
 
 import static ru.practicum.ewm.constant.Constant.DATE_PATTERN;

@@ -17,7 +17,7 @@ import ru.practicum.ewm.vallidarion.Create;
 import ru.practicum.ewm.vallidarion.Update;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
+
 import java.util.List;
 
 @RestController

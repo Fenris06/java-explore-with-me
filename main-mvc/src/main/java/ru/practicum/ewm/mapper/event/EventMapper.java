@@ -5,11 +5,9 @@ import ru.practicum.ewm.dto.event.EventFullDTO;
 import ru.practicum.ewm.dto.event.EventShortDTO;
 import ru.practicum.ewm.dto.event.NewEventDTO;
 import ru.practicum.ewm.dto.user.UserShortDTO;
-import ru.practicum.ewm.model.category.Category;
-import ru.practicum.ewm.model.event.Event;
-import ru.practicum.ewm.model.user.User;
 
-import java.time.LocalDateTime;
+import ru.practicum.ewm.model.event.Event;
+
 
 public class EventMapper {
 

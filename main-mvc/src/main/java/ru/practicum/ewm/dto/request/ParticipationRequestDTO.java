@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.ewm.model.event.DataState;
+
 import ru.practicum.ewm.model.request.RequestState;
 
 import java.time.LocalDateTime;
