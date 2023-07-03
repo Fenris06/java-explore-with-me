@@ -1,7 +1,7 @@
 package ru.practicum.ewm.service.event.impl;
 
+import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Session;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +15,9 @@ import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.mapper.event.EventMapper;
 import ru.practicum.ewm.model.category.Category;
 import ru.practicum.ewm.model.event.Event;
+
 import ru.practicum.ewm.model.event.DataState;
+import ru.practicum.ewm.model.event.QEvent;
 import ru.practicum.ewm.model.event.UserStateAction;
 import ru.practicum.ewm.model.user.User;
 import ru.practicum.ewm.service.event.EventService;
@@ -24,15 +26,15 @@ import ru.practicum.ewm.storage.event.EventRepository;
 import ru.practicum.ewm.storage.user.UserRepository;
 
 
-import javax.persistence.EntityManager;
-
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
@@ -50,19 +52,18 @@ public class EventServiceImpl implements EventService {
         event.setCategory(category);
         event.setCreated(crateTime);
         event.setUser(initiator);
-        event.setPublishedOn(crateTime);
+        // event.setPublishedOn(crateTime);
         //TODO сделать отдельной переменной
         event.setConfirmedRequests(0L);
         event.setState(DataState.PENDING);
         return EventMapper.toDTO(eventRepository.save(event));
     }
 
-
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<EventShortDTO> getEvents(Long userId, Integer from, Integer size) {
         checkUser(userId);
-        PageRequest pageRequest = PageRequest.of(from / size, size);
+        PageRequest pageRequest = PageRequest.of(from, size);
         return eventRepository.findByUser_Id(userId, pageRequest)
                 .stream()
                 .map(EventMapper::toShortDTO)
@@ -70,7 +71,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+
     public EventFullDTO getEvent(Long userId, Long eventId) {
         return EventMapper.toDTO(findEvent(userId, eventId));
     }
@@ -97,14 +98,16 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+
     public EventFullDTO getEventById(Long id) {
         Event event = eventRepository.findByIdAndState(id, DataState.PUBLISHED)
                 .orElseThrow(() -> new NotFoundException("Event id=" + id + " not found"));
+       // Event event1 = eventRepository.findById(id).orElseThrow(() -> new NotFoundException("Event id=" + id + " not found"));
         return EventMapper.toDTO(event);
     }
 
     @Override
-    @Transactional(readOnly = true)
+
     public List<EventShortDTO> getPubEvents(String text,
                                             List<Long> categories,
                                             Boolean paid,
@@ -115,14 +118,38 @@ public class EventServiceImpl implements EventService {
                                             Integer from,
                                             Integer size) {
 
-        PageRequest page = PageRequest.of(from / size, size);
-        return eventRepository.gegPubEvents(DataState.PUBLISHED, text, text, categories, paid, rangeStart, rangeEnd, page).stream().map(EventMapper::toShortDTO).collect(Collectors.toList());
+        PageRequest page = PageRequest.of(from, size);
+        return new ArrayList<>();
     }
 
     @Override
-    public List<EventFullDTO> getAdminEvents(List<Long> users, List<DataState> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
-        PageRequest page = PageRequest.of(from / size, size);
-        return eventRepository.getAdminEvents(users, states, categories, rangeStart, rangeEnd, page).stream().map(EventMapper::toDTO).collect(Collectors.toList());
+
+    public List<EventFullDTO> getAdminEvents(List<Long> users,
+                                             List<DataState> states,
+                                             List<Long> categories,
+                                             LocalDateTime rangeStart,
+                                             LocalDateTime rangeEnd,
+                                             Integer from,
+                                             Integer size) {
+        PageRequest page = PageRequest.of(from, size);
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if (users != null && !users.isEmpty()) {
+            booleanBuilder.and(QEvent.event.user.id.in(users));
+        }
+        if (states != null && !states.isEmpty()) {
+            booleanBuilder.and(QEvent.event.state.in(states));
+        }
+        if (categories != null && !categories.isEmpty()) {
+            booleanBuilder.and(QEvent.event.category.id.in(categories));
+        }
+        if (rangeStart != null && rangeEnd != null) {
+            booleanBuilder.and(QEvent.event.eventDate.between(rangeStart, rangeEnd));
+        }
+//        if (rangeEnd != null) {
+//            booleanBuilder.and(QEvent.event.eventDate.before(rangeEnd));
+//        }
+        List<Event> events = eventRepository.findAll(booleanBuilder, page).getContent();
+        return events.stream().map(EventMapper::toDTO).collect(Collectors.toList());
     }
 
     private User checkUser(Long userId) {
@@ -180,6 +207,7 @@ public class EventServiceImpl implements EventService {
             }
             if (newEventDTO.getStateAction().equals(UserStateAction.PUBLISH_EVENT)) {
                 event.setState(DataState.PUBLISHED);
+                event.setPublishedOn(LocalDateTime.now());
             }
 
         }

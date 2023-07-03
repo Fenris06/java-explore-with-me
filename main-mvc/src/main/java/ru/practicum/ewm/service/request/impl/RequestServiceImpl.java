@@ -165,6 +165,14 @@ public class RequestServiceImpl implements RequestService {
     }
 
     private Event checkRequestEventOwner(Long userId, Long eventId) {
+//     Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("ergae"));
+//        if(event.getUser().getId().equals(userId)) {
+//            throw new DataValidationException(
+//                    "User id=" + userId + " " +
+//                            "not owner of event or " +
+//                            "event id=" + eventId + " not create");
+//        }
+//        return event;
         return eventRepository.findByUser_IdAndId(userId, eventId)
                 .orElseThrow(() -> new DataValidationException(
                         "User id=" + userId + " " +
@@ -192,7 +200,6 @@ public class RequestServiceImpl implements RequestService {
                         ParticipationRequestDTO requestDTO = RequestMapper.toDTO(request);
                         rejected.add(requestDTO);
                     }
-
                 });
             }
             if (updateRequestDto.getStatus().equals(RequestState.REJECTED)) {

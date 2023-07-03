@@ -6,14 +6,14 @@ import ru.practicum.ewm.model.category.Category;
 import ru.practicum.ewm.model.user.User;
 
 import javax.persistence.*;
-import java.io.Serializable;
+
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "events")
-public class Event implements Serializable {
+public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

@@ -25,6 +25,17 @@ import static ru.practicum.ewm.constant.Constant.DATE_PATTERN;
 public class AdminEventsController {
     private final EventService eventService;
 
+    @GetMapping
+    public List<EventFullDTO> getAdminEvents(@RequestParam(required = false) List<Long> users,
+                                             @RequestParam(required = false) List<DataState> states,
+                                             @RequestParam(required = false) List<Long> categories,
+                                             @RequestParam(required = false) @DateTimeFormat(pattern = DATE_PATTERN) LocalDateTime rangeStart,
+                                             @RequestParam(required = false) @DateTimeFormat(pattern = DATE_PATTERN) LocalDateTime rangeEnd,
+                                             @RequestParam(name = "from", required = false, defaultValue = "0") Integer from,
+                                             @RequestParam(name = "size", required = false, defaultValue = "10") Integer size) {
+        return eventService.getAdminEvents(users, states, categories, rangeStart, rangeEnd, from, size);
+    }
+
     @PatchMapping("{eventId}")
     @Validated(Update.class)
     public EventFullDTO updateAdminEvent(@PathVariable("eventId") Long eventId,
@@ -32,15 +43,6 @@ public class AdminEventsController {
         return eventService.updateAdminEvent(eventId, newEventDTO);
     }
 
-    @GetMapping
-    public List<EventFullDTO> getAdminEvents(@RequestParam(name = "users", required = false) List<Long> users,
-                                             @RequestParam(name = "states", required = false) List<DataState> states,
-                                             @RequestParam(name = "categories", required = false) List<Long> categories,
-                                             @RequestParam(name = "rangeStart", required = false) @DateTimeFormat(pattern = DATE_PATTERN) LocalDateTime rangeStart,
-                                             @RequestParam(name = "rangeEnd", required = false) @DateTimeFormat(pattern = DATE_PATTERN) LocalDateTime rangeEnd,
-                                             @RequestParam(name = "from", required = false, defaultValue = "0") Integer from,
-                                             @RequestParam(name = "size", required = false, defaultValue = "10") Integer size) {
-        return eventService.getAdminEvents(users, states, categories, rangeStart, rangeEnd, from, size);
-    }
+
 
 }
