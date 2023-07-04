@@ -7,7 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import ru.practicum.ewm.model.event.Location;
-import ru.practicum.ewm.model.event.UserStateAction;
+import ru.practicum.ewm.constant.UserStateAction;
 import ru.practicum.ewm.vallidarion.Create;
 import ru.practicum.ewm.vallidarion.Update;
 

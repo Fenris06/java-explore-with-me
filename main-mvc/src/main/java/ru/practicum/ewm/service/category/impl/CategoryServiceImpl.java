@@ -42,7 +42,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public CategoryDTO updateCategory(Long catId, CategoryDTO categoryDTO) {
         Category update = checkCategory(catId);
-        //TODO возможно добавить проверку имени на одинаковость
         update.setName(categoryDTO.getName());
         return CategoryMapper.toDTO(categoryRepository.save(update));
     }

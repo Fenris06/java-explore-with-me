@@ -1,9 +1,8 @@
-package ru.practicum.ewm.model.event;
+package ru.practicum.ewm.constant;
 
 public enum UserStateAction {
     SEND_TO_REVIEW,
     CANCEL_REVIEW,
     PUBLISH_EVENT,
     REJECT_EVENT
-    //TODO подумать в какой пакет засунуть
 }

@@ -6,7 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.event.EventFullDTO;
 import ru.practicum.ewm.dto.event.NewEventDTO;
-import ru.practicum.ewm.model.event.DataState;
+import ru.practicum.ewm.model.event.EventState;
 import ru.practicum.ewm.service.event.EventService;
 import ru.practicum.ewm.vallidarion.Update;
 
@@ -27,7 +27,7 @@ public class AdminEventsController {
 
     @GetMapping
     public List<EventFullDTO> getAdminEvents(@RequestParam(required = false) List<Long> users,
-                                             @RequestParam(required = false) List<DataState> states,
+                                             @RequestParam(required = false) List<EventState> states,
                                              @RequestParam(required = false) List<Long> categories,
                                              @RequestParam(required = false) @DateTimeFormat(pattern = DATE_PATTERN) LocalDateTime rangeStart,
                                              @RequestParam(required = false) @DateTimeFormat(pattern = DATE_PATTERN) LocalDateTime rangeEnd,

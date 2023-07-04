@@ -7,8 +7,8 @@ import lombok.Setter;
 import lombok.ToString;
 import ru.practicum.ewm.dto.category.CategoryDTO;
 import ru.practicum.ewm.dto.user.UserShortDTO;
+import ru.practicum.ewm.model.event.EventState;
 import ru.practicum.ewm.model.event.Location;
-import ru.practicum.ewm.model.event.DataState;
 
 import java.time.LocalDateTime;
 
@@ -35,7 +35,7 @@ public class EventFullDTO {
     @JsonFormat(pattern = DATE_PATTERN)
     private LocalDateTime publishedOn;
     private Boolean requestModeration;
-    private DataState state;
+    private EventState state;
     private String title;
     private Long views;
 }

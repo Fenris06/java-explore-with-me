@@ -3,7 +3,7 @@ package ru.practicum.ewm.service.event;
 import ru.practicum.ewm.dto.event.EventFullDTO;
 import ru.practicum.ewm.dto.event.EventShortDTO;
 import ru.practicum.ewm.dto.event.NewEventDTO;
-import ru.practicum.ewm.model.event.DataState;
+import ru.practicum.ewm.model.event.EventState;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -34,5 +34,5 @@ public interface EventService {
                                      Integer size,
                                      HttpServletRequest request);
 
-    List<EventFullDTO> getAdminEvents(List<Long> users, List<DataState> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size);
+    List<EventFullDTO> getAdminEvents(List<Long> users, List<EventState> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size);
 }

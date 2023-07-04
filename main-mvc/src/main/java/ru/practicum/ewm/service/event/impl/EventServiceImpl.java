@@ -22,9 +22,9 @@ import ru.practicum.ewm.mapper.event.EventMapper;
 import ru.practicum.ewm.model.category.Category;
 import ru.practicum.ewm.model.event.Event;
 
-import ru.practicum.ewm.model.event.DataState;
+import ru.practicum.ewm.model.event.EventState;
 import ru.practicum.ewm.model.event.QEvent;
-import ru.practicum.ewm.model.event.UserStateAction;
+import ru.practicum.ewm.constant.UserStateAction;
 import ru.practicum.ewm.model.user.User;
 import ru.practicum.ewm.service.event.EventService;
 import ru.practicum.ewm.storage.category.CategoryRepository;
@@ -55,14 +55,12 @@ public class EventServiceImpl implements EventService {
         Category category = checkCategory(newEventDTO.getCategory());
         checkEventDate(newEventDTO.getEventDate());
         Event event = EventMapper.fromDTO(checkOptionalFields(newEventDTO));
-        //TODO убрать в отдельный метод
         event.setCategory(category);
         event.setCreated(crateTime);
         event.setUser(initiator);
-        //TODO сделать отдельной переменной
         event.setConfirmedRequests(0L);
         event.setViews(0L);
-        event.setState(DataState.PENDING);
+        event.setState(EventState.PENDING);
         return EventMapper.toDTO(eventRepository.save(event));
     }
 
@@ -88,14 +86,12 @@ public class EventServiceImpl implements EventService {
         Event event = findEvent(userId, eventId);
         checkEventDate(event.getEventDate());
         checkEventStatusByUser(event.getState());
-        //TODO подумать на счет валидации на значения состоящие из пробелов
         return EventMapper.toDTO(eventRepository.save(updateEventFields(event, newEventDTO)));
     }
 
     @Override
     @Transactional
     public EventFullDTO updateAdminEvent(Long eventId, NewEventDTO newEventDTO) {
-        //TODO подумать над объединением методов find events(null)
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + "not found"));
         checkEventDate(event.getEventDate());
@@ -105,7 +101,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDTO getEventById(Long id, HttpServletRequest request) {
-        Event event = eventRepository.findByIdAndState(id, DataState.PUBLISHED)
+        Event event = eventRepository.findByIdAndState(id, EventState.PUBLISHED)
                 .orElseThrow(() -> new NotFoundException("Event id=" + id + " not found"));
         String uri = request.getRequestURI();
         createStatistic(uri, request.getRemoteAddr(), "main-mvc");
@@ -179,7 +175,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventFullDTO> getAdminEvents(List<Long> users,
-                                             List<DataState> states,
+                                             List<EventState> states,
                                              List<Long> categories,
                                              LocalDateTime rangeStart,
                                              LocalDateTime rangeEnd,
@@ -249,17 +245,16 @@ public class EventServiceImpl implements EventService {
         }
         if (newEventDTO.getStateAction() != null) {
             if (newEventDTO.getStateAction().equals(UserStateAction.CANCEL_REVIEW)) {
-                event.setState(DataState.CANCELED);
+                event.setState(EventState.CANCELED);
             }
-            //TODO попробовать сделать с помощью OPTIONAL и подумать над локацией и над разбивкой статусов по юзеру и админу
             if (newEventDTO.getStateAction().equals(UserStateAction.SEND_TO_REVIEW)) {
-                event.setState(DataState.PENDING);
+                event.setState(EventState.PENDING);
             }
             if (newEventDTO.getStateAction().equals(UserStateAction.REJECT_EVENT)) {
-                event.setState(DataState.CANCELED);
+                event.setState(EventState.CANCELED);
             }
             if (newEventDTO.getStateAction().equals(UserStateAction.PUBLISH_EVENT)) {
-                event.setState(DataState.PUBLISHED);
+                event.setState(EventState.PUBLISHED);
                 event.setPublishedOn(LocalDateTime.now());
             }
         }
@@ -274,17 +269,17 @@ public class EventServiceImpl implements EventService {
         return event;
     }
 
-    private void checkEventStatusByUser(DataState state) {
-        if (state.equals(DataState.PUBLISHED)) {
+    private void checkEventStatusByUser(EventState state) {
+        if (state.equals(EventState.PUBLISHED)) {
             throw new DataValidationException("Only pending and cancel events can be changed");
         }
     }
 
-    private void checkEventStatusByAdmin(DataState state) {
-        if (state.equals(DataState.PUBLISHED)) {
+    private void checkEventStatusByAdmin(EventState state) {
+        if (state.equals(EventState.PUBLISHED)) {
             throw new DataValidationException("Only pending  events can be changed");
         }
-        if (state.equals(DataState.CANCELED)) {
+        if (state.equals(EventState.CANCELED)) {
             throw new DataValidationException("Only pending events can be changed");
         }
     }

@@ -10,7 +10,7 @@ import ru.practicum.ewm.exception.DataValidationException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.mapper.request.RequestMapper;
 import ru.practicum.ewm.model.event.Event;
-import ru.practicum.ewm.model.event.DataState;
+import ru.practicum.ewm.model.event.EventState;
 import ru.practicum.ewm.model.request.Request;
 
 import ru.practicum.ewm.model.request.RequestState;
@@ -60,7 +60,6 @@ public class RequestServiceImpl implements RequestService {
         Request request = checkUserRequest(userId, requestId);
         checkRequestStatus(request);
         request.setState(RequestState.CANCELED);
-        //TODO подумать на проверкой статуса cancel
         return RequestMapper.toDTO(requestRepository.save(request));
     }
 
@@ -90,7 +89,7 @@ public class RequestServiceImpl implements RequestService {
     private Event checkEvent(Long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event id=" + eventId + " not found"));
-        if (event.getState().equals(DataState.CANCELED) || event.getState().equals(DataState.PENDING)) {
+        if (event.getState().equals(EventState.CANCELED) || event.getState().equals(EventState.PENDING)) {
             throw new DataValidationException(
                     "Event id=" + eventId + "not publish. " +
                             "You can't create request for this event"
@@ -150,7 +149,6 @@ public class RequestServiceImpl implements RequestService {
         request.setCreated(createTime);
         request.setEvent(event);
         request.setUser(user);
-        //TODO подумать над тем как разбить метод
         if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
             Long newConfirmedRequests = event.getConfirmedRequests() + 1;
             event.setConfirmedRequests(newConfirmedRequests);
@@ -165,14 +163,6 @@ public class RequestServiceImpl implements RequestService {
     }
 
     private Event checkRequestEventOwner(Long userId, Long eventId) {
-//     Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("ergae"));
-//        if(event.getUser().getId().equals(userId)) {
-//            throw new DataValidationException(
-//                    "User id=" + userId + " " +
-//                            "not owner of event or " +
-//                            "event id=" + eventId + " not create");
-//        }
-//        return event;
         return eventRepository.findByUser_IdAndId(userId, eventId)
                 .orElseThrow(() -> new DataValidationException(
                         "User id=" + userId + " " +

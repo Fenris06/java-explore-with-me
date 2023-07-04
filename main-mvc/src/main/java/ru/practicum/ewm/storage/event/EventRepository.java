@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
-import ru.practicum.ewm.model.event.DataState;
+import ru.practicum.ewm.model.event.EventState;
 import ru.practicum.ewm.model.event.Event;
 
 
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long>, QuerydslPredicateExecutor<Event> {
-    Optional<Event> findByIdAndState(Long id, DataState state);
+    Optional<Event> findByIdAndState(Long id, EventState state);
 
     List<Event> findByUser_Id(Long id, Pageable pageable);
 

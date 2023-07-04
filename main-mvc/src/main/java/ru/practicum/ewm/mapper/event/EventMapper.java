@@ -48,7 +48,6 @@ public class EventMapper {
         fullDTO.setState(event.getState());
         fullDTO.setTitle(event.getTitle());
         fullDTO.setViews(event.getViews());
-        //TODO не забыть когда подключишь клинт добавить поле views
         return fullDTO;
     }
 
@@ -68,7 +67,7 @@ public class EventMapper {
         shortDTO.setInitiator(userShortDTO);
         shortDTO.setPaid(event.getPaid());
         shortDTO.setTitle(event.getTitle());
-        //TODO не забыть когда подключишь клинт добавить поле views
+        shortDTO.setViews(event.getViews());
         return shortDTO;
     }
 }
