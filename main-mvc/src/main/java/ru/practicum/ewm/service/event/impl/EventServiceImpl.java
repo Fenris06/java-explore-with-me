@@ -1,8 +1,10 @@
 package ru.practicum.ewm.service.event.impl;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +29,7 @@ import ru.practicum.ewm.storage.user.UserRepository;
 
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,7 +54,6 @@ public class EventServiceImpl implements EventService {
         event.setCategory(category);
         event.setCreated(crateTime);
         event.setUser(initiator);
-        // event.setPublishedOn(crateTime);
         //TODO сделать отдельной переменной
         event.setConfirmedRequests(0L);
         event.setState(DataState.PENDING);
@@ -98,16 +99,13 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-
     public EventFullDTO getEventById(Long id) {
         Event event = eventRepository.findByIdAndState(id, DataState.PUBLISHED)
                 .orElseThrow(() -> new NotFoundException("Event id=" + id + " not found"));
-       // Event event1 = eventRepository.findById(id).orElseThrow(() -> new NotFoundException("Event id=" + id + " not found"));
         return EventMapper.toDTO(event);
     }
 
     @Override
-
     public List<EventShortDTO> getPubEvents(String text,
                                             List<Long> categories,
                                             Boolean paid,
@@ -117,13 +115,45 @@ public class EventServiceImpl implements EventService {
                                             String sort,
                                             Integer from,
                                             Integer size) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if (text != null && text.isBlank()) {
+            booleanBuilder.and(QEvent.event.annotation.likeIgnoreCase("%" + text + "%")
+                    .or(QEvent.event.description.likeIgnoreCase("%" + text + "%")));
+        }
+        if (categories != null && !categories.isEmpty()) {
+            booleanBuilder.and(QEvent.event.category.id.in(categories));
+        }
+        if (paid != null) {
+            booleanBuilder.and(QEvent.event.paid.eq(paid));
+        }
 
-        PageRequest page = PageRequest.of(from, size);
-        return new ArrayList<>();
+        if (rangeStart != null && rangeEnd != null) {
+            if (rangeStart.isAfter(rangeEnd)) {
+                throw new ArgumentException("Start is before end");
+            }
+            booleanBuilder.and(QEvent.event.eventDate.between(rangeStart, rangeEnd));
+        } else {
+            booleanBuilder.and(QEvent.event.eventDate.after(LocalDateTime.now()));
+        }
+        if (onlyAvailable != null && onlyAvailable) {
+            BooleanExpression notLimit = QEvent.event.participantLimit.eq(0L);
+            BooleanExpression limit = QEvent.event.confirmedRequests.loe(QEvent.event.participantLimit);
+            booleanBuilder.and(notLimit.or(limit));
+        }
+        String sorting;
+        if ("EVENT_DATE".equals(sort)) {
+            sorting = "eventDate";
+        } else {
+            sorting = "id";
+        }
+        PageRequest pageRequest = PageRequest.of(from / size, size, Sort.by(sorting));
+        List<Event> events = eventRepository.findAll(booleanBuilder, pageRequest).getContent();
+        return events.stream()
+                .map(EventMapper::toShortDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-
     public List<EventFullDTO> getAdminEvents(List<Long> users,
                                              List<DataState> states,
                                              List<Long> categories,
@@ -145,11 +175,10 @@ public class EventServiceImpl implements EventService {
         if (rangeStart != null && rangeEnd != null) {
             booleanBuilder.and(QEvent.event.eventDate.between(rangeStart, rangeEnd));
         }
-//        if (rangeEnd != null) {
-//            booleanBuilder.and(QEvent.event.eventDate.before(rangeEnd));
-//        }
         List<Event> events = eventRepository.findAll(booleanBuilder, page).getContent();
-        return events.stream().map(EventMapper::toDTO).collect(Collectors.toList());
+        return events.stream()
+                .map(EventMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     private User checkUser(Long userId) {
@@ -209,7 +238,6 @@ public class EventServiceImpl implements EventService {
                 event.setState(DataState.PUBLISHED);
                 event.setPublishedOn(LocalDateTime.now());
             }
-
         }
         Optional.ofNullable(newEventDTO.getAnnotation()).ifPresent(event::setAnnotation);
         Optional.ofNullable(newEventDTO.getDescription()).ifPresent(event::setDescription);

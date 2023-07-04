@@ -8,7 +8,7 @@ import ru.practicum.ewm.dto.event.EventFullDTO;
 import ru.practicum.ewm.dto.event.EventShortDTO;
 import ru.practicum.ewm.service.event.EventService;
 
-import javax.validation.constraints.Future;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,10 +25,10 @@ public class PubEventController {
     public List<EventShortDTO> getPubEvents(@RequestParam(name = "text", required = false) String text,
                                             @RequestParam(name = "categories", required = false) List<Long> categories,
                                             @RequestParam(name = "paid", required = false) Boolean paid,
-                                            @RequestParam(name = "rangeStart", required = false) @DateTimeFormat(pattern = DATE_PATTERN) @Future LocalDateTime rangeStart,
+                                            @RequestParam(name = "rangeStart", required = false) @DateTimeFormat(pattern = DATE_PATTERN) LocalDateTime rangeStart,
                                             @RequestParam(name = "rangeEnd", required = false) @DateTimeFormat(pattern = DATE_PATTERN) LocalDateTime rangeEnd,
                                             @RequestParam(name = "onlyAvailable", required = false) Boolean onlyAvailable,
-                                            @RequestParam(name = "sort", required = false) String sort,
+                                            @RequestParam(name = "sort", required = false, defaultValue = "id") String sort,
                                             @RequestParam(name = "from", required = false, defaultValue = "0") Integer from,
                                             @RequestParam(name = "size", required = false, defaultValue = "10") Integer size) {
         return eventService.getPubEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
