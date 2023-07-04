@@ -47,6 +47,7 @@ public class EventMapper {
         fullDTO.setRequestModeration(event.getRequestModeration());
         fullDTO.setState(event.getState());
         fullDTO.setTitle(event.getTitle());
+        fullDTO.setViews(event.getViews());
         //TODO не забыть когда подключишь клинт добавить поле views
         return fullDTO;
     }

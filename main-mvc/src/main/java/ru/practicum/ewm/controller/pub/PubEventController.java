@@ -9,6 +9,7 @@ import ru.practicum.ewm.dto.event.EventShortDTO;
 import ru.practicum.ewm.service.event.EventService;
 
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,13 +31,14 @@ public class PubEventController {
                                             @RequestParam(name = "onlyAvailable", required = false) Boolean onlyAvailable,
                                             @RequestParam(name = "sort", required = false, defaultValue = "id") String sort,
                                             @RequestParam(name = "from", required = false, defaultValue = "0") Integer from,
-                                            @RequestParam(name = "size", required = false, defaultValue = "10") Integer size) {
-        return eventService.getPubEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+                                            @RequestParam(name = "size", required = false, defaultValue = "10") Integer size,
+                                            HttpServletRequest request) {
+        return eventService.getPubEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, request);
     }
 
     @GetMapping("{id}")
-    public EventFullDTO getEvent(@PathVariable("id") Long id) {
-        return eventService.getEventById(id);
+    public EventFullDTO getEvent(@PathVariable("id") Long id, HttpServletRequest request) {
+        return eventService.getEventById(id, request);
     }
 }
 

@@ -5,6 +5,7 @@ import ru.practicum.ewm.dto.event.EventShortDTO;
 import ru.practicum.ewm.dto.event.NewEventDTO;
 import ru.practicum.ewm.model.event.DataState;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface EventService {
 
     EventFullDTO updateAdminEvent(Long eventId, NewEventDTO newEventDTO);
 
-    EventFullDTO getEventById(Long id);
+    EventFullDTO getEventById(Long id, HttpServletRequest request);
 
     List<EventShortDTO> getPubEvents(String text,
                                      List<Long> categories,
@@ -30,7 +31,8 @@ public interface EventService {
                                      Boolean onlyAvailable,
                                      String sort,
                                      Integer from,
-                                     Integer size);
+                                     Integer size,
+                                     HttpServletRequest request);
 
     List<EventFullDTO> getAdminEvents(List<Long> users, List<DataState> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size);
 }

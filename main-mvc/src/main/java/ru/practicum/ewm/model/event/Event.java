@@ -53,4 +53,6 @@ public class Event {
     private DataState state;
     @Column(name = "title", length = 120, nullable = false)
     private String title;
+    @Column(name = "views")
+    private Long views;
 }

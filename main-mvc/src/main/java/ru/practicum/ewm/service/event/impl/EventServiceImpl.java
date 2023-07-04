@@ -5,9 +5,13 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ru.practicum.ewm.HitDTO;
+import ru.practicum.ewm.StatDTO;
+import ru.practicum.ewm.client.StatClient;
 import ru.practicum.ewm.dto.event.EventFullDTO;
 import ru.practicum.ewm.dto.event.EventShortDTO;
 import ru.practicum.ewm.dto.event.NewEventDTO;
@@ -28,10 +32,10 @@ import ru.practicum.ewm.storage.event.EventRepository;
 import ru.practicum.ewm.storage.user.UserRepository;
 
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,6 +45,7 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
+    private final StatClient client;
 
     @Override
     @Transactional
@@ -56,6 +61,7 @@ public class EventServiceImpl implements EventService {
         event.setUser(initiator);
         //TODO сделать отдельной переменной
         event.setConfirmedRequests(0L);
+        event.setViews(0L);
         event.setState(DataState.PENDING);
         return EventMapper.toDTO(eventRepository.save(event));
     }
@@ -72,7 +78,6 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-
     public EventFullDTO getEvent(Long userId, Long eventId) {
         return EventMapper.toDTO(findEvent(userId, eventId));
     }
@@ -99,10 +104,14 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventFullDTO getEventById(Long id) {
+    public EventFullDTO getEventById(Long id, HttpServletRequest request) {
         Event event = eventRepository.findByIdAndState(id, DataState.PUBLISHED)
                 .orElseThrow(() -> new NotFoundException("Event id=" + id + " not found"));
-        return EventMapper.toDTO(event);
+        String uri = request.getRequestURI();
+        createStatistic(uri, request.getRemoteAddr(), "main-mvc");
+        Long view = getViews(uri, event.getCreated(), LocalDateTime.now());
+        event.setViews(view);
+        return EventMapper.toDTO(eventRepository.save(event));
     }
 
     @Override
@@ -114,7 +123,8 @@ public class EventServiceImpl implements EventService {
                                             Boolean onlyAvailable,
                                             String sort,
                                             Integer from,
-                                            Integer size) {
+                                            Integer size,
+                                            HttpServletRequest request) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (text != null && text.isBlank()) {
             booleanBuilder.and(QEvent.event.annotation.likeIgnoreCase("%" + text + "%")
@@ -143,12 +153,26 @@ public class EventServiceImpl implements EventService {
         String sorting;
         if ("EVENT_DATE".equals(sort)) {
             sorting = "eventDate";
+        } else if ("VIEWS".equals(sort)) {
+            sorting = "views";
         } else {
             sorting = "id";
         }
+        LocalDateTime dateTime = LocalDateTime.now();
         PageRequest pageRequest = PageRequest.of(from / size, size, Sort.by(sorting));
         List<Event> events = eventRepository.findAll(booleanBuilder, pageRequest).getContent();
-        return events.stream()
+        if (events.isEmpty()) {
+            return new ArrayList<>();
+        }
+        String uri = request.getRequestURI();
+        LocalDateTime startDate = events.stream().map(Event::getCreated).min(Comparator.naturalOrder()).orElse(dateTime);
+        Long viewsBefore = getViews(uri, startDate, dateTime);
+        createStatistic(uri, request.getRemoteAddr(), "main");
+        Long viewsAfter = getViews(uri, startDate, dateTime);
+        if (!viewsBefore.equals(viewsAfter)) {
+            events.forEach(e -> e.setViews(e.getViews() + 1));
+        }
+        return eventRepository.saveAll(events).stream()
                 .map(EventMapper::toShortDTO)
                 .collect(Collectors.toList());
     }
@@ -263,5 +287,24 @@ public class EventServiceImpl implements EventService {
         if (state.equals(DataState.CANCELED)) {
             throw new DataValidationException("Only pending events can be changed");
         }
+    }
+
+    private Long getViews(String uri, LocalDateTime from, LocalDateTime to) {
+        return Optional.ofNullable(client.getStats(from, to, List.of(uri), true))
+                .map(ResponseEntity::getBody)
+                .stream()
+                .flatMap(Collection::stream)
+                .filter(v -> v.getUri().equals(uri))
+                .mapToLong(HitDTO::getHits)
+                .sum();
+    }
+
+    private void createStatistic(String uri, String ip, String app) {
+        StatDTO statDTO = new StatDTO();
+        statDTO.setIp(ip);
+        statDTO.setUri(uri);
+        statDTO.setApp(app);
+        statDTO.setTimestamp(LocalDateTime.now());
+        client.createStat(statDTO);
     }
 }
