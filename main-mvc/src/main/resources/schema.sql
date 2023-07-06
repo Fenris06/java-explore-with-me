@@ -1,0 +1,57 @@
+CREATE TABLE IF NOT EXISTS users (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  email VARCHAR(254) NOT NULL,
+  name VARCHAR(250) NOT NULL,
+  CONSTRAINT UQ_USER_EMAIL UNIQUE (email)
+);
+
+CREATE TABLE IF NOT EXISTS categories (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
+  CONSTRAINT OQ_CATEGORY_NAME UNIQUE(name)
+);
+
+CREATE TABLE IF NOT EXISTS events (
+ id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ annotation VARCHAR(2000) NOT NULL,
+ category_id BIGINT NOT NULL,
+ confirmed_requests BIGINT,
+ created_on TIMESTAMP NOT NULL,
+ description VARCHAR(7000) NOT NULL,
+ event_date TIMESTAMP NOT NULL,
+ initiator_id BIGINT NOT NULL,
+ lat REAL NOT NULL,
+ lon REAL NOT NULL,
+ paid BOOLEAN NOT NULL,
+ participant_limit BIGINT NOT NULL,
+ published_on TIMESTAMP,
+ request_moderation BOOLEAN NOT NULL,
+ state VARCHAR(20) NOT NULL,
+ title VARCHAR(120) NOT NULL,
+ views BIGINT,
+ CONSTRAINT fk_events_to_users FOREIGN KEY(initiator_id) REFERENCES users(id) ON DELETE CASCADE,
+ CONSTRAINT fk_events_to_categories FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS requests (
+ id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ created TIMESTAMP NOT NULL,
+ event BIGINT NOT NULL,
+ requester BIGINT NOT NULL,
+ state VARCHAR(20) NOT NULL,
+ CONSTRAINT fk_requests_to_events FOREIGN KEY(event) REFERENCES events(id) ON DELETE CASCADE,
+ CONSTRAINT fk_requests_to_users FOREIGN KEY(requester) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS compilations (
+ id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ pinned BOOLEAN NOT NULL,
+ title varchar(50) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS compilations_events (
+ compilation_id BIGINT NOT NULL,
+ event_id BIGINT NOT NULL,
+ CONSTRAINT fk_compilations_events_to_events FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE,
+ CONSTRAINT fk_compilations_events_to_compilations FOREIGN KEY(compilation_id) REFERENCES compilations(id) ON DELETE CASCADE
+);

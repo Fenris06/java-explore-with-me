@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 import ru.practicum.ewm.HitDTO;
 import ru.practicum.ewm.StatAnswerDTO;
 import ru.practicum.ewm.StatDTO;
@@ -20,10 +21,8 @@ import java.util.List;
 public class StatClient {
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final WebClient client;
-    @Value("${client.url:http://localhost:9090}")
-    private String url;
 
-    public StatClient() {
+    public StatClient(@Value("${client.url:http://localhost:9090}") String url) {
         this.client = WebClient.builder()
                 .baseUrl(url)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -34,7 +33,7 @@ public class StatClient {
         return client
                 .post()
                 .uri("/hit")
-                .body(statDTO, StatDTO.class)
+                .body(Mono.just(statDTO), StatDTO.class)
                 .retrieve()
                 .bodyToMono(StatAnswerDTO.class)
                 .block();
@@ -49,7 +48,7 @@ public class StatClient {
                         .path("/stats")
                         .queryParam("start", startDate)
                         .queryParam("end", endDate)
-                        .queryParam("uris", uris)
+                        .queryParam("uris", String.join(",", uris))
                         .queryParam("unique", unique.toString())
                         .build())
                 .retrieve()
