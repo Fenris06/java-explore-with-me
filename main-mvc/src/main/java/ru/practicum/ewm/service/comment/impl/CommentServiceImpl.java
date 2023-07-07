@@ -169,7 +169,7 @@ public class CommentServiceImpl implements CommentService {
     public void deleteCancelComment(Long eventId, LocalDateTime dateBefore, Integer from, Integer size) {
         PageRequest page = PageRequest.of(from / size, size);
         if (dateBefore == null) {
-            dateBefore= LocalDateTime.now();
+            dateBefore = LocalDateTime.now();
         }
         List<Comment> remove = commentRepository.findRemoveComment(eventId, CommentState.CANCELED, dateBefore, page);
         if (remove.isEmpty()) {
