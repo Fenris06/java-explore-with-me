@@ -8,7 +8,8 @@ import lombok.ToString;
 import ru.practicum.ewm.vallidarion.Create;
 import ru.practicum.ewm.vallidarion.Update;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
+
 import javax.validation.constraints.Size;
 
 
@@ -17,7 +18,7 @@ import javax.validation.constraints.Size;
 @EqualsAndHashCode
 @ToString
 public class NewCommentDTO {
-    @NotNull(message = "Field text. Error: can't be null", groups = Create.class)
-    @Size(min = 3, max = 500, message = "Field text. Error: must be min 3 char and max 120", groups = {Create.class, Update.class})
+    @NotBlank(message = "Field text. Error: can't be null, empty or has only whitespace", groups = Create.class)
+    @Size(min = 3, max = 500, message = "Field text. Error: must be min 3 char and max 500", groups = {Create.class, Update.class})
     private String text;
 }

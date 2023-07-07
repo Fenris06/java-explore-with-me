@@ -55,3 +55,14 @@ CREATE TABLE IF NOT EXISTS compilations_events (
  CONSTRAINT fk_compilations_events_to_events FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE,
  CONSTRAINT fk_compilations_events_to_compilations FOREIGN KEY(compilation_id) REFERENCES compilations(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS comments (
+ id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+ owner_id BIGINT NOT NULL,
+ event_id BIGINT NOT NULL,
+ text VARCHAR(500) NOT NULL,
+ state VARCHAR(20) NOT NULL,
+ create_time TIMESTAMP NOT NULL,
+ CONSTRAINT fk_comments_to_users FOREIGN KEY(owner_id) REFERENCES users(id) ON DELETE CASCADE,
+ CONSTRAINT fk_comments_to_events FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE
+ );

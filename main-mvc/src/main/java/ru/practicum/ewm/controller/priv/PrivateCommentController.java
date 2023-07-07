@@ -12,6 +12,8 @@ import ru.practicum.ewm.vallidarion.Create;
 import ru.practicum.ewm.vallidarion.Update;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -52,7 +54,10 @@ public class PrivateCommentController {
     }
 
     @GetMapping
-    public List<FullCommentDTO> getCommentsByOwner(@PathVariable("userId") Long userId) {
-        return commentService.getCommentsByOwner(userId);
+    public List<FullCommentDTO> getCommentsByOwner(@PathVariable("userId") Long userId,
+                                                   @RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort,
+                                                   @RequestParam(name = "from", required = false, defaultValue = "0") @Min(0) Integer from,
+                                                   @RequestParam(name = "size", required = false, defaultValue = "10") @Min(1) @Max(100) Integer size) {
+        return commentService.getCommentsByOwner(userId, sort ,from, size);
     }
 }

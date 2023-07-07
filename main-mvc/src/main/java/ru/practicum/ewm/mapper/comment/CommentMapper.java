@@ -2,6 +2,7 @@ package ru.practicum.ewm.mapper.comment;
 
 import ru.practicum.ewm.dto.comment.FullCommentDTO;
 import ru.practicum.ewm.dto.comment.NewCommentDTO;
+import ru.practicum.ewm.dto.comment.ShortCommentDTO;
 import ru.practicum.ewm.model.comment.Comment;
 
 public class CommentMapper {
@@ -21,5 +22,13 @@ public class CommentMapper {
         fullDTO.setState(comment.getState());
         fullDTO.setCreateTime(comment.getCreateTime());
         return fullDTO;
+    }
+
+    public static ShortCommentDTO toShortDTO(Comment comment) {
+        ShortCommentDTO shortDTO = new ShortCommentDTO();
+        shortDTO.setOwnerName(comment.getOwner().getName());
+        shortDTO.setText(comment.getText());
+        shortDTO.setCommentDate(comment.getCreateTime());
+        return shortDTO;
     }
 }
