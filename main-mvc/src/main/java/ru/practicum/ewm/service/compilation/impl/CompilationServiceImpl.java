@@ -59,7 +59,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-   @Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public List<CompilationDTO> getCompilations(Boolean pinned, Integer from, Integer size) {
         PageRequest pageRequest = PageRequest.of(from / size, size);
         List<CompilationDTO> compilations;

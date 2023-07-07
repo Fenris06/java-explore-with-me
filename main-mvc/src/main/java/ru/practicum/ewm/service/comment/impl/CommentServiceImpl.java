@@ -136,6 +136,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional()
     public List<FullCommentDTO> updateAdminComment(Set<Long> ids, CommentState state) {
         List<Comment> update = commentRepository.findAllById(ids);
         LocalDateTime createTime = LocalDateTime.now();
@@ -164,6 +165,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public void deleteCancelComment(Long eventId, LocalDateTime dateBefore, Integer from, Integer size) {
         PageRequest page = PageRequest.of(from / size, size);
         if (dateBefore == null) {

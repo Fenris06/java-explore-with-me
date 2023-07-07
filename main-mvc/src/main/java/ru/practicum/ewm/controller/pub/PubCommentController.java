@@ -18,9 +18,9 @@ public class PubCommentController {
     private final CommentService commentService;
 
     @GetMapping("/{eventId}")
-    public List<ShortCommentDTO> getComments(@PathVariable ("eventId") @Min(1) Long eventId,
-                                             @RequestParam(name= "from", required = false, defaultValue = "0") @Min(0) Integer from,
-                                             @RequestParam(name = "size",required = false, defaultValue = "10") @Min(1) @Max(1000) Integer size) {
+    public List<ShortCommentDTO> getComments(@PathVariable("eventId") @Min(1) Long eventId,
+                                             @RequestParam(name = "from", required = false, defaultValue = "0") @Min(0) Integer from,
+                                             @RequestParam(name = "size", required = false, defaultValue = "10") @Min(1) @Max(1000) Integer size) {
         return commentService.getComments(eventId, from, size);
     }
 }

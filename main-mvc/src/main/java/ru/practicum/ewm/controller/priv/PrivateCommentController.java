@@ -58,6 +58,6 @@ public class PrivateCommentController {
                                                    @RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort,
                                                    @RequestParam(name = "from", required = false, defaultValue = "0") @Min(0) Integer from,
                                                    @RequestParam(name = "size", required = false, defaultValue = "10") @Min(1) @Max(100) Integer size) {
-        return commentService.getCommentsByOwner(userId, sort ,from, size);
+        return commentService.getCommentsByOwner(userId, sort, from, size);
     }
 }
