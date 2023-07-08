@@ -30,7 +30,7 @@ public class CompilationServiceImpl implements CompilationService {
     private final CompilationRepository compilationRepository;
 
     @Override
-  //  @Transactional
+    @Transactional
     public CompilationDTO createCompilation(NewCompilationDTO newCompilationDTO) {
         Compilation compilation = CompilationMapper.fromDTO(checkFields(newCompilationDTO));
         List<Event> events = getEvents(newCompilationDTO.getEvents());
@@ -42,14 +42,14 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-  //  @Transactional
+    @Transactional
     public void deleteCompilation(Long compId) {
         checkCompilation(compId);
         compilationRepository.deleteById(compId);
     }
 
     @Override
-  //  @Transactional
+    @Transactional
     public CompilationDTO updateCompilation(Long compId, NewCompilationDTO newCompilationDTO) {
         Compilation compilation = checkCompilation(compId);
         Compilation updateFields = compilationRepository.save(updateCompilationFields(compilation, newCompilationDTO));
@@ -59,7 +59,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-   // @Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public List<CompilationDTO> getCompilations(Boolean pinned, Integer from, Integer size) {
         PageRequest pageRequest = PageRequest.of(from / size, size);
         List<CompilationDTO> compilations;
