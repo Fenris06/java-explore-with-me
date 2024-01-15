@@ -8,6 +8,19 @@
     * **stats-client** клиет для сбора статистики. Он ижектится в основной сервис и обеспечивает сбор данных из основного сервиса в сервис статистики.
     * **stats-dto** модуль Dto классов для сервиса статистики stats-service и клента stats-client.
     * **stats-service** сервис статистики. Он позволяет сохранить статистику просморов позьзователями эвентов.
+    * # Technologies Used
+* Java 11
+* Springboot 2.7.9
+* Hibernate
+* Lombok
+* PostgreSql
+* H2 database for test
+* Spring webClien
+* Swagger
+* Maven
+* Mockito
+* JUnit 5
+* Docker
 # main-mvc database diagram
 ![database diagram](https://github.com/Fenris06/java-explore-with-me/blob/main/mainmvc%20-%20public.png)
 https://github.com/Fenris06/java-explore-with-me/pull/5
